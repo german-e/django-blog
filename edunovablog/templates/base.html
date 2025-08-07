@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Blog Post - Start Bootstrap Template</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="{% static 'assets/favicon.ico' %}" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  {% block extra_css %} {% endblock %}
+
+</head>
+
+<body>
+
+  {% include 'partials/navbar.html' %}
+
+  {% block header %}
+  {% endblock %}
+
+
+  <main class="container mt-3">
+
+    <div class="row">
+      <div class="col-lg-8">
+      {% block content %}
+      
+      {% endblock %}
+    </div>
+    
+    
+    <!-- Side widgets-->
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-header">Buscar</div>
+          <div class="card-body">
+            
+            <form class="input-group" method="get" action="{% url 'buscar_posts' %}">
+              
+              <input class="form-control" type="text" placeholder="Ingresá tu búsqueda..."
+              aria-label="Ingresá tu búsqueda..." aria-describedby="button-search" name="q" />
+              <button class="btn btn-primary" id="button-search" type="submit">Go!</button>
+            </form>
+            
+          </div>
+        </div>
+        <!-- Categories widget-->
+        <div class="card mb-4">
+          <div class="card-header">Categories</div>
+          <div class="card-body">
+            <div class="row">
+              
+              {# categorias es un contexto global context_proccesor #}
+              {% for categoria in categorias %}
+              <div class="col-sm-6">
+                <ul class="list-unstyled mb-0">
+                  <li><a href="{% url 'posts_por_categoria' categoria.slug %}">{{ categoria.nombre }}</a></li>
+                  
+                </ul>
+              </div>
+              {% endfor %}
+              
+            </div>
+          </div>
+        </div>
+        <!-- Side widget-->
+        <div class="card mb-4">
+          <div class="card-header">Tags (Etiquetas)</div>
+          <div class="card-body">
+            {% for tag in tags %}
+            {% with size=tag.cantidad_usos|add:1 %}
+                <a href="{% url 'posts_por_tag' tag.nombre %}" 
+                   class="d-inline-block me-2 mb-2 text-decoration-none"
+                   style="font-size: {{ size|add:0.7|floatformat:1 }}em;">
+                    #{{ tag.nombre }}
+                </a>
+            {% endwith %}
+        {% empty %}
+            <p class="text-muted">No hay tags aún.</p>
+        {% endfor %}
+          </div>
+          </div>
+        </div>
+        
+      </div>
+        
+  </main>
+
+  {% include 'partials/footer.html' %}
+
+
+
+  {% include 'registration/login_modal.html' %}
+
+
+  <!-- Bootstrap core JS-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Core theme JS-->
+  <script src="{% static 'js/scripts.js' %}"></script>
+
+{% block extra_js %}
+{% endblock %}
+
+
+</body>
+
+</html>

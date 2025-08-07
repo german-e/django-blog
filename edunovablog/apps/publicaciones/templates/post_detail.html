@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+
+
+
+<!-- Post content-->
+<article>
+    <!-- Post header-->
+    <header class="mb-4">
+        <!-- Post title-->
+        <h1 class="fw-bolder mb-1">{{post.titulo}}</h1>
+        <!-- Post meta content-->
+        <div class="text-muted fst-italic mb-2">Publicado el {{ post.fecha_publicacion }} por {{ post.publicado_por }}
+        </div>
+        <!-- Post categories-->
+        {% for categoria in post.categorias.all %}
+        <a class="badge bg-secondary text-decoration-none link-light" href="#">
+            {{ categoria.nombre }}
+        </a>
+        {% endfor %}
+        {% for tag in post.tags.all %}
+        <a class="badge bg-secondary text-decoration-none link-light" href="#">
+            {{ tag.nombre }}
+        </a>
+        {% endfor %}
+
+    </header>
+    <!-- Preview image figure-->
+    <figure class="mb-4"><img class="img-fluid rounded" src="{{ post.imagen.url }}"
+            alt="{{ post.titulo }}" /></figure>
+    <!-- Post content-->
+    <section>
+        <p class="fs-5">{{ post.contenido|safe }}</p>
+    </section>
+
+
+    <div class="d-flex mb-2 justify-content-between">
+
+        <div id="like-container-{{ post.pk }}">
+            <button class="btn btn-like" data-id="{{ post.pk }}" data-url="{% url 'dar_like_ajax' post.pk %}">
+                {% if user in post.likes.all %}
+                <i class="bi bi-heart-fill text-danger"></i>
+                {% else %}
+                <i class="bi bi-heart"></i>
+                {% endif %}
+                <span class="like-count">{{ post.likes.count }}</span>
+            </button>
+        </div>
+        {% if user.is_authenticated and user == post.publicado_por %}
+        <a href="{% url 'editar_post' post.pk %}" class="btn btn-warning rounded-circle"><i class="bi bi-pencil"></i></a>
+        {% endif %}
+    </div>
+
+</article>
+<!-- Comments section-->
+<section class="mb-5">
+    <div class="card bg-light">
+        <div class="card-body">
+            <!-- Comment form-->
+            {% if user.is_authenticated %}
+            <form method="post" class="mb-4 d-flex flex-column">
+                {% csrf_token %}
+                {{ form_comentario.contenido }}
+                <div class="mt-2">
+                    <button class="btn btn-dark" type="submit">Enviar</button>
+                </div>
+            </form>
+            {% else %}
+            <!-- <p>Debes <a href="{% url 'login' %}?next={{ request.path }}">iniciar sesión</a> para comentar.</p> -->
+            <p>Debes <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal"
+                    data-next="{{ request.path }}">Inicia Sesión Modal</a>Para comentar</p>
+            {% endif %}
+
+            <!-- Comment with nested comments-->
+
+            {% for comentario in comentarios %}
+            <div class="d-flex mb-3">
+                <!-- Parent comment-->
+                <div class="flex-shrink-0"><img class="rounded-circle"
+                        src="{% if user.foto_perfil %}{{ user.foto_perfil.url }}{% else %}{% static 'assets/avatar-default.png' %}{% endif %}" width="50" height="50" alt="Foto Perfil usuario {{ comentario.autor }}" />
+                </div>
+                <div class="ms-3">
+                    {% if comentario.autor.first_name %}
+                    <div class="fw-bold">{{ comentario.autor }}</div>
+                    {% else %}
+                    <div class="fw-bold">{{ comentario.autor.username }}</div>
+                    {% endif %}
+                    <small class="text-muted">{{ comentario.creado|date:"d M Y - H:i" }}</small>
+                    {{ comentario.contenido }}
+
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Todavía no hay comentarios.Se el primero!</p>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

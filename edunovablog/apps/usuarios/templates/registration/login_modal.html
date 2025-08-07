@@ -1,0 +1,43 @@
+
+
+<div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Iniciar sesión</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <form id="loginForm" method="post" action="{% url 'ajax_login' %}">
+
+        {% csrf_token %}        
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Usuario</label>
+            <input type="text" name="username" class="form-control" id="id_username" required>
+          </div>
+          <div class="mb-3">
+            <label for="id_password" class="form-label">Contraseña</label>
+            <input type="password" name="password" class="form-control" id="id_password" required>
+          </div>
+          
+        </div>
+        
+        <div class="modal-footer d-flex justify-content-between">
+          <div>
+
+            <span id="loginError" class="text-danger text-center d-none"></span>
+          </div>
+          <div>
+
+            <button type="submit" class="btn btn-primary">Ingresar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <input type="hidden" name="next" id="nextInput" value="">
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

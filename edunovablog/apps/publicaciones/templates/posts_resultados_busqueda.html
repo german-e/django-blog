@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Resultados para "{{ query }}"</h2>
+<div class="row">
+  {% if posts %}
+    {% for post in posts %}
+      <div class="col-lg-6">
+      <!-- Blog post -->
+      <div class="card mb-4">
+        <a href="{% url 'post_detail' post.pk %}">
+          <img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="{{ post.titulo }}" />
+        </a>
+        <div class="card-body">
+          <div class="small text-muted">{{ post.fecha_publicacion|date:"F j, Y" }}</div>
+          <h2 class="card-title h4">{{ post.titulo }}</h2>
+          <p class="card-text">{{ post.vista_previa }}</p>
+          <a class="btn btn-primary" href="{% url 'post_detail' post.pk %}">Leer más →</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No se encontraron resultados.</p>
+
+    {% endif %}
+    </div>
+{% endblock %}

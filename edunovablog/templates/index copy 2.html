@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+
+
+<!-- Page header with logo and tagline-->
+<!-- Page content-->
+
+{%block header %}
+<header class="py-5 bg-light border-bottom mb-4">
+  <div class="container">
+    <div class="text-center my-5">
+      <h1 class="fw-bolder">Bienvenidos a EduNova</h1>
+      <p class="lead mb-0">Despierta tu curiosidad, potencia tu mente. <br />Este es el punto de encuentro para
+        educadores, estudiantes y mentes inquietas.</p>
+
+    </div>
+  </div>
+</header>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-lg-8">
+    {% if ultimo_destacado %}
+    <div class="card mb-4">
+      <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
+      <div class="card-body">
+        <div class="small text-muted">{{ ultimo_destacado.fecha_publicacion|date:"F j, Y" }}</div>
+        <h2 class="card-title">{{ ultimo_destacado.titulo }}</h2>
+        <p class="card-text">{{ ultimo_destacado.contenido |truncatewords:12 }}</p>
+        <a class="btn btn-primary" href="{% url 'post_detail' ultimo_destacado.pk %}">Leer más →</a>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Blog entries-->
+
+    {% if categoria_actual %}
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h5 class="card-title">Publicaciones en: {{ categoria_actual.nombre }}</h5>
+
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+      {% for post in posts %}
+      <div class="col-lg-6">
+        <!-- Blog post -->
+        <div class="card mb-4">
+          <a href="{% url 'post_detail' post.pk %}">
+            <img class="card-img-top" src="https://dummyimage.com/700x350/dee2e6/6c757d.jpg" alt="{{ post.titulo }}" />
+          </a>
+          <div class="card-body">
+            <div class="small text-muted">{{ post.fecha_publicacion|date:"F j, Y" }}</div>
+            <h2 class="card-title h4">{{ post.titulo }}</h2>
+            <p class="card-text">{{ post.vista_previa }}</p>
+            <a class="btn btn-primary" href="{% url 'post_detail' post.pk %}">Leer más →</a>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <div class="col">
+        <p>No hay publicaciones disponibles.</p>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <nav aria-label="Pagination">
+      <hr class="my-0" />
+      <ul class="pagination justify-content-center my-4">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Anterior</a></li>
+        {% endif %}
+
+        {% for num in paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+        {% else %}
+        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><a class="page-link" href="#">Siguiente</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    {% endif %}
+  </div>
+  
+
+
+  {% block lateral_widgets %}
+  <!-- Search widget-->
+  <div class="col-lg-4">
+    <div class="card mb-4">
+      <div class="card-header">Buscar</div>
+      <div class="card-body">
+
+        <form class="input-group" method="get" action="{% url 'buscar_posts' %}">
+
+          <input class="form-control" type="text" placeholder="Ingresá tu búsqueda..."
+            aria-label="Ingresá tu búsqueda..." aria-describedby="button-search" name="q" />
+          <button class="btn btn-primary" id="button-search" type="submit">Go!</button>
+        </form>
+
+      </div>
+    </div>
+    <!-- Categories widget-->
+    <div class="card mb-4">
+      <div class="card-header">Categories</div>
+      <div class="card-body">
+        <div class="row">
+
+          {# categorias es un contexto global context_proccesor #}
+          {% for categoria in categorias %}
+          <div class="col-sm-6">
+            <ul class="list-unstyled mb-0">
+              <li><a href="{% url 'posts_por_categoria' categoria.slug %}">{{ categoria.nombre }}</a></li>
+
+            </ul>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+    </div>
+    <!-- Side widget-->
+    <div class="card mb-4">
+      <div class="card-header">Side Widget</div>
+      <div class="card-body">You can put anything you want inside of these side widgets. They are easy
+        to use, and feature the Bootstrap 5 card component!</div>
+    </div>
+  </div>
+  {% endblock %}
+</div>
+{% endblock %}
